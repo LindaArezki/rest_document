@@ -40,6 +40,8 @@ class AccessBDD {
                     return $this->selectAllRevues();
                 case "exemplaire" :
                     return $this->selectAllExemplairesRevue();
+                case "commandedocument" :
+                    return $this->selectAllCommandesDocument();
                 default:
                     // cas d'un select portant sur une table simple, avec tri sur le libellé
                     return $this->selectAllTableSimple($table);
@@ -60,6 +62,8 @@ class AccessBDD {
             switch($table){
                 case "exemplaire" :
                     return $this->selectAllExemplairesRevue($id);
+                case "commandedocument" :
+                    return $this->selectAllCommandesDocument($id);
                 default:
                     // cas d'un select portant sur une table simple			
                     $param = array(
@@ -126,6 +130,9 @@ class AccessBDD {
         $req .= "order by titre ";
         return $this->conn->queryAll($req);
     }	
+    
+    
+    
 
     /**
      * récupération de tous les exemplaires d'une revue
@@ -143,6 +150,24 @@ class AccessBDD {
         return $this->conn->queryAll($req, $param);
     }		
 
+    /**
+     * récupération de toutes les commandes d'un document
+     * @param string $id id de la commande
+     * @return lignes de la requete
+     */
+    public function selectAllCommandesDocument($id)
+    {
+        $param = array(
+                "id" => $id
+        );
+        $req = "Select c.id, c.dateCommande, c.montant, cd.nbExemplaire, cd.idLivreDvd ,cd.suivi, s.libelle ";
+        $req .= "FROM commande c join commandedocument cd ON c.id= cd.id ";
+        $req .= "join suivi s on cd.suivi = s.idetape ";
+        $req .= "where cd.idLivreDvd = :id ";
+        $req .= "order by c.dateCommande DESC ";
+        return $this->conn->queryAll($req, $param);
+    }	
+    
     /**
      * suppresion d'une ou plusieurs lignes dans une table
      * @param string $table nom de la table
@@ -163,7 +188,7 @@ class AccessBDD {
             return null;
         }
     }
-
+    
     /**
      * ajout d'une ligne dans une table
      * @param string $table nom de la table
@@ -191,6 +216,8 @@ class AccessBDD {
             return null;
         }
     }
+    
+    
 
     /**
      * modification d'une ligne dans une table
