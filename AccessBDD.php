@@ -42,6 +42,8 @@ class AccessBDD {
                     return $this->selectAllExemplairesRevue();
                 case "commandedocument" :
                     return $this->selectAllCommandesDocument();
+                case "abonnement" :
+                    return $this->selectFinAbonnement();
                 default:
                     // cas d'un select portant sur une table simple, avec tri sur le libellé
                     return $this->selectAllTableSimple($table);
@@ -64,6 +66,8 @@ class AccessBDD {
                     return $this->selectAllExemplairesRevue($id);
                 case "commandedocument" :
                     return $this->selectAllCommandesDocument($id);
+                case "abonnement" :
+                     return $this->selectAllCommandesRevue($id);
                 default:
                     // cas d'un select portant sur une table simple			
                     $param = array(
@@ -131,7 +135,19 @@ class AccessBDD {
         return $this->conn->queryAll($req);
     }	
     
-    
+    /**
+     * récupération de toutes les lignes de la table Revue et les tables associées
+     * @return lignes de la requete
+     */
+    public function selectFinAbonnement(){
+     $req ="SELECT a.dateFinAbonnement, a.idRevue, d.titre ";
+		$req .="FROM abonnement a ";
+		$req .="JOIN revue r ON a.idRevue = r.id ";
+		$req .="JOIN document d ON r.id = d.id ";
+		$req .="WHERE DATEDIFF(CURRENT_DATE(), a.dateFinAbonnement) < 30 ";
+		$req .="ORDER BY a.dateFinAbonnement ASC; ";
+    return $this->conn->queryAll($req);
+    }	
     
 
     /**
@@ -165,6 +181,23 @@ class AccessBDD {
         $req .= "join suivi s on cd.suivi = s.idetape ";
         $req .= "where cd.idLivreDvd = :id ";
         $req .= "order by c.dateCommande DESC ";
+        return $this->conn->queryAll($req, $param);
+    }	
+    
+    /**
+     * récupération de toutes les commandes d'un document
+     * @param string $id id de la commande
+     * @return lignes de la requete
+     */
+    public function selectAllCommandesRevue($id)
+    {
+        $param = array(
+                "id" => $id
+        );
+        $req = "SELECT c.id, c.dateCommande, c.montant, a.dateFinAbonnement, a.idRevue  ";
+        $req .= "FROM commande c JOIN abonnement a ON c.id=a.id ";
+        $req .= "WHERE a.idRevue= :id  ";
+        $req .= "order by c.dateCommande DESC  ";
         return $this->conn->queryAll($req, $param);
     }	
     
