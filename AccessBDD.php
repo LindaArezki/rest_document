@@ -68,6 +68,8 @@ class AccessBDD {
                     return $this->selectAllCommandesDocument($id);
                 case "abonnement" :
                      return $this->selectAllCommandesRevue($id);
+                case "utilisateur" :
+                     return $this->selectUtilisateur($id);
                 default:
                     // cas d'un select portant sur une table simple			
                     $param = array(
@@ -80,6 +82,7 @@ class AccessBDD {
         }
     }
 
+   
     /**
      * récupération de toutes les lignes de d'une table simple (sans jointure) avec tri sur le libellé
      * @param type $table
@@ -136,7 +139,7 @@ class AccessBDD {
     }	
     
     /**
-     * récupération de toutes les lignes de la table Revue et les tables associées
+     * récupére les abonnements se terminant
      * @return lignes de la requete
      */
     public function selectFinAbonnement(){
@@ -161,7 +164,7 @@ class AccessBDD {
         );
         $req = "Select e.id, e.numero, e.dateAchat, e.photo, e.idEtat ";
         $req .= "from exemplaire e join document d on e.id=d.id ";
-        $req .= "where e.id = :id ";
+        $req .= "where e.id =:id ";
         $req .= "order by e.dateAchat DESC";		
         return $this->conn->queryAll($req, $param);
     }		
@@ -185,7 +188,7 @@ class AccessBDD {
     }	
     
     /**
-     * récupération de toutes les commandes d'un document
+     * récupération de toutes les commandes revue
      * @param string $id id de la commande
      * @return lignes de la requete
      */
@@ -198,6 +201,23 @@ class AccessBDD {
         $req .= "FROM commande c JOIN abonnement a ON c.id=a.id ";
         $req .= "WHERE a.idRevue= :id  ";
         $req .= "order by c.dateCommande DESC  ";
+        return $this->conn->queryAll($req, $param);
+    }	
+    
+     /**
+     * récupération d'un utilisateur
+     * @param string $id id de la commande
+     * @return lignes de la requete
+     */
+    public function selectUtilisateur($id)
+    {
+        $param = array(
+                "id" => $id
+                
+        );
+        $req = "SELECT u.login, u.pwd , u.idservice, s.libelle  ";
+        $req .= "FROM utilisateur u  JOIN service s ON s.id=u.idService ";
+        $req .= "WHERE u.login =:id  ";     
         return $this->conn->queryAll($req, $param);
     }	
     

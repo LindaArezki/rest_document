@@ -46,7 +46,7 @@ class Controle{
             $result = $this->accessBDD->selectAll($table);
         }else{
             $result = $this->accessBDD->selectOne($table, $id);
-        }
+        }       
         if ($result == null || $result == false){
             $this->reponse(400, "requete invalide");
         }else{	
