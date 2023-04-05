@@ -6,12 +6,13 @@ include_once("ConnexionPDO.php");
  */
 class AccessBDD {
 	
-    public $login="tfwbgjkx_mediatekuser";
-    public $mdp="P@sswordbddmediatek01!";
-    public $bd="tfwbgjkx_mediatek";
+    public $login="root";
+    public $mdp="";
+    public $bd="mediatek86";
     public $serveur="localhost";
     public $port="3306";	
     public $conn = null;
+
     /**
      * constructeur : demande de connexion à la BDD
      */
@@ -295,4 +296,4 @@ class AccessBDD {
         }
     }
 
-}
+} 
